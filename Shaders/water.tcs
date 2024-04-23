@@ -1,0 +1,45 @@
+// Tessellation control shader
+
+#version 400
+
+layout (vertices = 4) out;  // Quads each have 4 vertices
+
+// Input vertex data from vertex shader, aggregated into patches
+in vec3 eye_vs[];
+in vec3 light_vs[];
+in vec3 normal_vs[];
+in vec2 uv_vs[];
+
+// Output data, passed to tessellation evaluation shader
+out vec3 normal_tcs[];
+out vec3 position_tcs[];
+out vec3 eye_tcs[];
+out vec3 light_tcs[];
+out vec2 uv_tcs[];
+
+// Uniform values that stay the same for all executions of the shader
+uniform float outerTess;
+uniform float innerTess;
+
+void main() {
+
+    // Access built-in outputs from the vertex shader
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+
+    // Write data out to arrays
+    position_tcs[gl_InvocationID] = gl_in[gl_InvocationID].gl_Position.xyz;
+
+    eye_tcs[gl_InvocationID] = eye_vs[gl_InvocationID];
+    light_tcs[gl_InvocationID] = light_vs[gl_InvocationID];
+    normal_tcs[gl_InvocationID] = normal_vs[gl_InvocationID];
+    uv_tcs[gl_InvocationID] = uv_vs[gl_InvocationID];
+
+    // Control tesselation levels
+    gl_TessLevelOuter[0] = outerTess;
+    gl_TessLevelOuter[1] = outerTess;
+    gl_TessLevelOuter[2] = outerTess;
+    gl_TessLevelOuter[3] = outerTess;
+    gl_TessLevelInner[0] = innerTess;
+    gl_TessLevelInner[1] = innerTess;
+
+}
